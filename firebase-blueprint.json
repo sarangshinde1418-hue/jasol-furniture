@@ -1,0 +1,229 @@
+{
+  "entities": {
+    "Bill": {
+      "title": "Bill",
+      "description": "Furniture billing invoice and payment receipt document",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique bill identifier"
+        },
+        "billNo": {
+          "type": "string",
+          "description": "Serial bill number such as JYF-001",
+          "maxLength": 50
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer full name",
+          "maxLength": 100
+        },
+        "mobileNumber": {
+          "type": "string",
+          "description": "Customer contact mobile phone number",
+          "maxLength": 20
+        },
+        "address": {
+          "type": "string",
+          "description": "Customer residential or site address",
+          "maxLength": 250
+        },
+        "billDate": {
+          "type": "string",
+          "description": "Invoice date formatted string",
+          "maxLength": 30
+        },
+        "billTime": {
+          "type": "string",
+          "description": "Invoice time formatted string",
+          "maxLength": 20
+        },
+        "items": {
+          "type": "array",
+          "description": "List of material items"
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Gross material amount before discounts"
+        },
+        "discountPercent": {
+          "type": "number",
+          "description": "Discount percentage"
+        },
+        "discountAmount": {
+          "type": "number",
+          "description": "Deducted discount amount"
+        },
+        "netAmount": {
+          "type": "number",
+          "description": "Net payable amount"
+        },
+        "receivedAmount": {
+          "type": "number",
+          "description": "Amount received from customer"
+        },
+        "pendingAmount": {
+          "type": "number",
+          "description": "Pending balance amount"
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "Paid, Partial, or Unpaid",
+          "enum": ["Paid", "Partial", "Unpaid"]
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Cash, UPI, Bank Transfer, or Cheque",
+          "maxLength": 50
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional notes or warranty details",
+          "maxLength": 500
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase UID of user who created this bill",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        }
+      },
+      "required": [
+        "billNo",
+        "customerName",
+        "mobileNumber",
+        "totalAmount",
+        "netAmount",
+        "receivedAmount",
+        "pendingAmount",
+        "paymentStatus",
+        "ownerId"
+      ]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer record for billing and ledger (hisab-kitab)",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Customer ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Customer name",
+          "maxLength": 100
+        },
+        "mobile": {
+          "type": "string",
+          "description": "Customer mobile phone number",
+          "maxLength": 20
+        },
+        "address": {
+          "type": "string",
+          "description": "Customer location or address",
+          "maxLength": 250
+        },
+        "totalBillsCount": {
+          "type": "number",
+          "description": "Count of bills issued"
+        },
+        "totalBilledAmount": {
+          "type": "number",
+          "description": "Sum of all bills"
+        },
+        "totalReceivedAmount": {
+          "type": "number",
+          "description": "Sum of all received payments"
+        },
+        "totalPendingDue": {
+          "type": "number",
+          "description": "Sum of outstanding pending payments"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "User UID who owns this customer record",
+          "maxLength": 128
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of update"
+        }
+      },
+      "required": ["name", "mobile", "ownerId"]
+    },
+    "BusinessProfile": {
+      "title": "BusinessProfile",
+      "description": "Store settings, shop branding, bill series sequence and contact info",
+      "type": "object",
+      "properties": {
+        "businessName": {
+          "type": "string",
+          "description": "Firm name",
+          "maxLength": 100
+        },
+        "tagline": {
+          "type": "string",
+          "description": "Motto or tagline",
+          "maxLength": 100
+        },
+        "subcategories": {
+          "type": "string",
+          "description": "Tags e.g. Furniture | Woodwork",
+          "maxLength": 100
+        },
+        "address": {
+          "type": "string",
+          "description": "Shop address",
+          "maxLength": 200
+        },
+        "phone": {
+          "type": "string",
+          "description": "Shop phone number",
+          "maxLength": 30
+        },
+        "billPrefix": {
+          "type": "string",
+          "description": "Prefix for invoice numbers like JYF-",
+          "maxLength": 20
+        },
+        "nextSequence": {
+          "type": "number",
+          "description": "Next bill counter number"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Owner user UID",
+          "maxLength": 128
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of update"
+        }
+      },
+      "required": ["businessName", "phone", "billPrefix", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/bills/{billId}": {
+      "schema": "Bill",
+      "description": "Invoices and payment receipts created by the authenticated owner"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Customer contact and khata hisab ledger summaries"
+    },
+    "/business_profiles/{profileId}": {
+      "schema": "BusinessProfile",
+      "description": "Owner business and bill invoice preferences"
+    }
+  }
+}

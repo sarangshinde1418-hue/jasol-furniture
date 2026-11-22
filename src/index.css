@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: #1c1917;
+    background-color: #f7f5f0;
+  }
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-cursive {
+  font-family: 'Great Vibes', cursive;
+}
+
+/* Custom Gold and Wood Styling */
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #f7d070 0%, #d49b29 50%, #f3c959 100%);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fce08b 0%, #dfa532 50%, #fef3c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border {
+  border-color: #d49b29;
+}
+
+.wood-dark-bg {
+  background-color: #2b170c;
+  background-image: radial-gradient(circle at 50% 30%, #3e2213 0%, #1d0f07 100%);
+}
+
+/* Receipt Print Optimization - Exact Full A4 Edge-to-Edge Single Page with ZERO white border */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0 !important;
+  }
+  
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset outer layout wrappers during print */
+  #root, main {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .print-only-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+    background: #fffbf2 !important;
+  }
+
+  .receipt-body-content {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 4mm 6mm !important;
+    gap: 2.5mm !important;
+  }
+
+  .print-only-container img {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

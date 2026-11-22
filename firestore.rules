@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default deny all unmapped documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOwner(ownerId) {
+      return isSignedIn() && request.auth.uid == ownerId;
+    }
+
+    // Bill Validation Helper
+    function isValidBill(data) {
+      return data.ownerId == request.auth.uid
+        && data.billNo is string && data.billNo.size() > 0 && data.billNo.size() <= 50
+        && data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100
+        && data.mobileNumber is string && data.mobileNumber.size() > 0 && data.mobileNumber.size() <= 20
+        && data.totalAmount is number && data.totalAmount >= 0
+        && data.netAmount is number && data.netAmount >= 0
+        && data.receivedAmount is number && data.receivedAmount >= 0
+        && data.pendingAmount is number && data.pendingAmount >= 0
+        && data.paymentStatus in ['Paid', 'Partial', 'Unpaid']
+        && (data.items is list) && data.items.size() <= 100;
+    }
+
+    // Customer Validation Helper
+    function isValidCustomer(data) {
+      return data.ownerId == request.auth.uid
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.mobile is string && data.mobile.size() > 0 && data.mobile.size() <= 20;
+    }
+
+    // Business Profile Validation Helper
+    function isValidBusinessProfile(data) {
+      return data.ownerId == request.auth.uid
+        && data.businessName is string && data.businessName.size() > 0 && data.businessName.size() <= 100
+        && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 30
+        && data.billPrefix is string && data.billPrefix.size() > 0 && data.billPrefix.size() <= 20;
+    }
+
+    // Collections
+    match /bills/{billId} {
+      allow get: if isSignedIn() && existing().ownerId == request.auth.uid && isValidId(billId);
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(billId) && isValidBill(incoming());
+      allow update: if isSignedIn() && isValidId(billId) && isValidBill(incoming())
+                    && incoming().ownerId == existing().ownerId;
+      allow delete: if isSignedIn() && isValidId(billId) && existing().ownerId == request.auth.uid;
+    }
+
+    match /customers/{customerId} {
+      allow get: if isSignedIn() && existing().ownerId == request.auth.uid && isValidId(customerId);
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
+      allow update: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming())
+                    && incoming().ownerId == existing().ownerId;
+      allow delete: if isSignedIn() && isValidId(customerId) && existing().ownerId == request.auth.uid;
+    }
+
+    match /business_profiles/{profileId} {
+      allow get: if isSignedIn() && existing().ownerId == request.auth.uid && isValidId(profileId);
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(profileId) && isValidBusinessProfile(incoming());
+      allow update: if isSignedIn() && isValidId(profileId) && isValidBusinessProfile(incoming())
+                    && incoming().ownerId == existing().ownerId;
+      allow delete: if isSignedIn() && isValidId(profileId) && existing().ownerId == request.auth.uid;
+    }
+  }
+}

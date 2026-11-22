@@ -1,0 +1,6 @@
+{
+  "name": "Jasol Furniture Billing & Hisab Software",
+  "description": "Professional billing, payment receipt generation, and khata accounts software for Jasol Furniture with Firebase cloud database and print support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
